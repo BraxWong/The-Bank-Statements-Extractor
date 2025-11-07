@@ -6,10 +6,15 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QPalette, QColor, QFont
 from CustomComponents.ClickableLabel import ClickableLabel
+import Model.UserCredentialsModel
+from Controller.UserCredentialsController import *
+from View.SignUp import *
 
 class Login(QWidget):
     def __init__(self):
         super().__init__()
+
+        self.user_credential_controller = UserCredentialsController()
 
         self.setWindowTitle("Login")
         self.setMinimumSize(QSize(300, 400))
@@ -101,7 +106,8 @@ class Login(QWidget):
         self.setLayout(layout)
 
     def handle_login(self):
-        pass
+        user_credential = self.user_credential_controller.get_user_credentials_based_on_username(self.username_input.text) 
+        print(user_credential)
 
     def update_password_visibility(self):
         if self.show_password_radioButton.isChecked():
@@ -112,7 +118,9 @@ class Login(QWidget):
             self.show_password = False
 
     def forget_password(self):
-        pass 
+        pass
 
     def sign_up(self):
-        pass
+        sign_up_widget = SignUp()
+        sign_up_widget.resize(800,400)
+        sign_up_widget.show()
