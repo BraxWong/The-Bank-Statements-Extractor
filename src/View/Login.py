@@ -1,10 +1,10 @@
 from PySide6.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QFormLayout,
-    QLabel, QLineEdit, QPushButton, QMessageBox, QRadioButton,
+    QWidget, QVBoxLayout, QHBoxLayout, QFormLayout,
+    QLabel, QLineEdit, QPushButton, QRadioButton,
     QGraphicsDropShadowEffect
 )
 from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QPalette, QColor, QFont
+from PySide6.QtGui import QColor, QFont
 from CustomComponents.ClickableLabel import ClickableLabel
 import Model.UserCredentialsModel
 from Controller.UserCredentialsController import *
@@ -105,6 +105,7 @@ class Login(QWidget):
 
         self.setLayout(layout)
 
+
     def handle_login(self):
         user_credential = self.user_credential_controller.get_user_credentials_based_on_username(self.username_input.text) 
         print(user_credential)
@@ -121,6 +122,6 @@ class Login(QWidget):
         pass
 
     def sign_up(self):
-        sign_up_widget = SignUp()
-        sign_up_widget.resize(800,400)
-        sign_up_widget.show()
+        self.sign_up_widget = SignUp()
+        self.close()
+        self.sign_up_widget.show()

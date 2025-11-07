@@ -1,16 +1,16 @@
 from PySide6.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QFormLayout,
-    QLabel, QLineEdit, QPushButton, QMessageBox, QRadioButton,
-    QGraphicsDropShadowEffect, QMainWindow
+    QWidget, QVBoxLayout, QHBoxLayout, QFormLayout,
+    QLabel, QLineEdit, QPushButton,  QRadioButton,
+    QGraphicsDropShadowEffect, 
 )
 from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QPalette, QColor, QFont
+from PySide6.QtGui import QColor, QFont
 from CustomComponents.ClickableLabel import ClickableLabel
 import Model.UserCredentialsModel
 from Controller.UserCredentialsController import *
 from Util.Util import *
 
-class SignUp(QMainWindow):
+class SignUp(QWidget):
     def __init__(self):
         super().__init__()
 
