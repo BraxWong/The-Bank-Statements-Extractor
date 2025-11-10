@@ -20,7 +20,6 @@ def check_password_strength(password):
     upper_letters_exists_in_password=False
     symbols= {'!','@','#','$','^','&','*','?'}
     symbol_exists_in_password=False
-    password=''
    
     for char in password:
         if char.isdigit():

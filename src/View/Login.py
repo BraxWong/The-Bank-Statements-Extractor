@@ -8,14 +8,13 @@ from PySide6.QtGui import QColor, QFont
 from CustomComponents.ClickableLabel import ClickableLabel
 import Model.UserCredentialsModel
 from Controller.UserCredentialsController import *
-from View.SignUp import *
+
 
 class Login(QWidget):
     def __init__(self):
         super().__init__()
 
         self.user_credential_controller = UserCredentialsController()
-
         self.setWindowTitle("Login")
         self.setMinimumSize(QSize(300, 400))
         self.setStyleSheet("""
@@ -36,8 +35,8 @@ class Login(QWidget):
             background: white; 
             border-radius: 15px;
             padding: 30px;
-            min-width: 400px;
-            max-width: 400px;
+            min-width: 500px;
+            max-width: 500px;
         """)
         form_container.setGraphicsEffect(shadow)
 
@@ -54,6 +53,7 @@ class Login(QWidget):
 
         forget_password_label = ClickableLabel("Forget password?", self)
         forget_password_label.clicked.connect(self.forget_password)
+
         sign_up_label = ClickableLabel("SIGN UP", self)
         sign_up_label.clicked.connect(self.sign_up)
 
@@ -107,8 +107,11 @@ class Login(QWidget):
 
 
     def handle_login(self):
-        user_credential = self.user_credential_controller.get_user_credentials_based_on_username(self.username_input.text) 
-        print(user_credential)
+        user_credential = self.user_credential_controller.login_validation(self.username_input.text(), self.password_input.text()) 
+        if user_credential:
+            print("Logged in")
+        else:
+            print("Failed")
 
     def update_password_visibility(self):
         if self.show_password_radioButton.isChecked():
@@ -119,9 +122,13 @@ class Login(QWidget):
             self.show_password = False
 
     def forget_password(self):
-        pass
+        from View.ForgetPassword import ForgetPassword
+        self.widget = ForgetPassword()
+        self.close()
+        self.widget.show()
 
     def sign_up(self):
+        from View.SignUp import SignUp
         self.sign_up_widget = SignUp()
         self.close()
         self.sign_up_widget.show()

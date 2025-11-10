@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QColor, QFont
 from CustomComponents.ClickableLabel import ClickableLabel
+from CustomComponents.CustomDialog import CustomDialog
 import Model.UserCredentialsModel
 from Controller.UserCredentialsController import *
 from Util.Util import *
@@ -114,11 +115,31 @@ class SignUp(QWidget):
             self.show_password = False
 
     def handle_sign_up(self):
-        if self.user_credential_controller.get_user_credentials_based_on_username(self.username_input.text) != None:
-            print("Username has been used.")
-        elif not check_password_strength(self.password_input.text):
-            print("Password is invalid.")
+        error_message = self.new_account_detail_validation()
+        if error_message == None:
+            self.user_credential_controller.add_user_credentials(self.email_input.text(), self.username_input.text(), self.password_input.text(), self.hint.text())
+            dialog = CustomDialog("Success", "Your account has been created")
+            from View.Login import Login
+            self.widget = Login()
+            self.close()
+            self.widget.show()
         else:
-            self.user_credential_controller.add_credentials(self.email_input.text, self.username_input.text, self.password_input.text, self.hint.text)
-            print("Success")
-
+            dialog = CustomDialog("Error", error_message)
+            dialog.exec()
+    def new_account_detail_validation(self):
+        error_message = 'Following errors have been found:\n'
+        if not len(self.email_input.text()): 
+            error_message += "Please provide a valid email address.\n"
+        if not len(self.username_input.text()):
+            error_message += "Please provide a username.\n"
+        if not len(self.password_input.text()):
+            error_message += "Please provide a password.\n"
+        if not len(self.hint.text()):
+            error_message += "Please provide a password hint.\n"
+        if self.hint.text() == self.password_input.text() or self.password_input.text() in self.hint.text():
+            error_message += "Password can't appear in the password hint.\n"
+        if self.user_credential_controller.get_user_credentials_based_on_username(self.username_input.text()) != None:
+            error_message += "Username has been used.\n"
+        if not check_password_strength(self.password_input.text()):
+            error_message += "Password is invalid."
+        return None if error_message == 'Following errors have been found:\n' else error_message

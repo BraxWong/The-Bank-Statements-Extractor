@@ -16,13 +16,18 @@ class UserCredentialsController:
         )
     
     def get_user_credentials_based_on_username(self, username):
-        self.cur.execute(
-            f'SELECT * FROM UserCredentials WHERE username = "{username}"'
-        )
+        self.cur.execute('SELECT * FROM UserCredentials WHERE username = ?', (username,))
         info = self.cur.fetchone()
         if info is None:
             return None
-        return UserCredentialsModel(info[0][0], info[0][1], info[0][2], info[0][3])
+        return UserCredentialsModel(info[0], info[1], info[2], info[3])
+        
+    def login_validation(self, username, password):
+        self.cur.execute('SELECT * FROM UserCredentials WHERE username = ? AND password = ?', (username, password))
+        info = self.cur.fetchone()
+        if info is None:
+            return None
+        return UserCredentialsModel(info[0], info[1], info[2], info[3])
 
     def add_user_credentials(self, email, username, password, hint):
         self.cur.execute(
@@ -35,3 +40,19 @@ class UserCredentialsController:
             f'DELETE * FROM UserCredentials WHERE username = "{username}"'
         )
         self.con.commit()
+
+    def change_user_password_hint(self, email, password, hint):
+        self.cur.execute(
+            f'UPDATE UserCredentials SET password = ? AND hint = ? WHERE email = ?', (password, hint, email)
+        )
+        self.con.commit()
+
+    def get_all_credentials(self):
+        self.cur.execute(
+            f'SELECT * FROM UserCredentials'
+        )
+        info = self.cur.fetchall()
+        user_credentials = []
+        for credential in info:
+            user_credentials.append(UserCredentialsModel(credential[0], credential[1], credential[2], credential[3]))
+        return user_credentials
