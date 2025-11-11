@@ -17,6 +17,6 @@ if %errorlevel% equ 0 (
 
 del "%TEMP%\ps_check.tmp"
 
-pip install -r requirements.txt
+pip install -r ../requirements.txt
 
 endlocal

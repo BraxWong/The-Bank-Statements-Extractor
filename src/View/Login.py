@@ -17,7 +17,7 @@ class Login(QWidget):
 
         self.user_credential_controller = UserCredentialsController()
         self.setWindowTitle("Login")
-        self.setMinimumSize(QSize(300, 400))
+        self.setMinimumSize(QSize(300, 500))
         self.setStyleSheet("""
             background: qlineargradient(x1:0, y1:1, x2:1, y2:0, 
                                 stop:0 #0ac2f5, stop:0.5 #aa73e6, stop:1 #f50ab2);           

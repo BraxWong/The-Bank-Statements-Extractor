@@ -17,7 +17,6 @@ class Dashboard(QWidget):
         self.transaction_entries_controller = TransactionEntriesController()
         transactions = self.transaction_entries_controller.get_transaction_entries_based_on_username(self.username)
         if transactions is None:
-            print("No Data")
             #TODO: Show files picker
             file_path, _ = QFileDialog.getOpenFileName(
                 self,
@@ -29,4 +28,5 @@ class Dashboard(QWidget):
                 parser = Parser(file_path)
                 parser.parse()
         else:
-            #TODO: Create the dashboard UI
+            #TODO: Create a UI for the dashboard
+            pass

@@ -1,2 +1,2 @@
-pypdf
+PyMuPDF
 pyside6
