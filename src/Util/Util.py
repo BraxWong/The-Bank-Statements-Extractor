@@ -33,3 +33,11 @@ def check_password_strength(password):
     if number_exists_in_password and letters_exists_in_password and upper_letters_exists_in_password and symbol_exists_in_password and len(password) >= 12:
         return True 
     return False
+
+new_widget_reference = None
+def transition_to_login_page(widget):
+    from View.Login import Login
+    global new_widget_reference
+    new_widget_reference = Login()
+    widget.close()
+    new_widget_reference.show()

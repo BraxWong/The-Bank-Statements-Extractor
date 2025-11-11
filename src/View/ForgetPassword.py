@@ -44,6 +44,26 @@ class ForgetPassword(QWidget):
 
         form_layout = QFormLayout()
 
+        self.back_button = QPushButton("<")
+        self.back_button.clicked.connect(lambda x:transition_to_login_page(self))
+        self.back_button.setStyleSheet("""
+            QPushButton {
+                background-color: qlineargradient(x1:0, y1:1, x2:1, y2:0, 
+                                stop:0 #0ac2f5, stop:0.5 #aa73e6, stop:1 #f50ab2);
+                color: white;
+                border: none;
+                border-radius: 5px;
+                padding: 10px;
+                font-size: 16px;
+                font-weight: bold;
+                min-width: 25px;
+                max-width: 50px;
+            }
+            
+            QPushButton:hover {
+                border: 2px solid #ffffff
+            }
+        """)
         self.email_layout = QHBoxLayout()
         self.email_layout.setSpacing(5)
         self.email_input = QLineEdit()
@@ -117,6 +137,7 @@ class ForgetPassword(QWidget):
         button_layout.setContentsMargins(0, 0, 0, 0)  
         button_container.setLayout(button_layout)  
 
+        form_layout.addRow(self.back_button)
         form_layout.addRow(reset_password_label)
         form_layout.addRow(QLabel("Email Address:"))
         form_layout.addRow(self.email_layout)
@@ -159,10 +180,7 @@ class ForgetPassword(QWidget):
         if error_message == None:
             self.user_credential_controller.add_user_credentials(self.email_input.text(), self.password_input.text(), self.hint.text())
             dialog = CustomDialog("Success", "Your password has been reset")
-            from View.Login import Login
-            self.widget = Login()
-            self.close()
-            self.widget.show()
+            transition_to_login_page(self)
         else:
             dialog = CustomDialog("Error", error_message)
 

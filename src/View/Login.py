@@ -8,6 +8,7 @@ from PySide6.QtGui import QColor, QFont
 from CustomComponents.ClickableLabel import ClickableLabel
 import Model.UserCredentialsModel
 from Controller.UserCredentialsController import *
+from View.Dashboard import *
 
 
 class Login(QWidget):
@@ -109,7 +110,9 @@ class Login(QWidget):
     def handle_login(self):
         user_credential = self.user_credential_controller.login_validation(self.username_input.text(), self.password_input.text()) 
         if user_credential:
-            print("Logged in")
+            self.widget = Dashboard(user_credential.get_username())
+            self.close()
+            self.widget.show()
         else:
             print("Failed")
 
