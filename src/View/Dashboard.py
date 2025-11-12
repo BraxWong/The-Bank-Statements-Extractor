@@ -25,7 +25,7 @@ class Dashboard(QWidget):
                 "Text files (*.pdf);;All files (*.*)"
             )
             if file_path:
-                parser = Parser(file_path)
+                parser = Parser(file_path, self.username)
                 parser.parse()
         else:
             #TODO: Create a UI for the dashboard

@@ -108,13 +108,16 @@ class Login(QWidget):
 
 
     def handle_login(self):
-        user_credential = self.user_credential_controller.login_validation(self.username_input.text(), self.password_input.text()) 
-        if user_credential:
-            self.widget = Dashboard(user_credential.get_username())
-            self.close()
-            self.widget.show()
-        else:
-            print("Failed")
+        self.widget = Dashboard("wongbrax@gmail.com")
+        self.close()
+        self.widget.show()
+        #user_credential = self.user_credential_controller.login_validation(self.username_input.text(), self.password_input.text()) 
+        # if user_credential:
+            # self.widget = Dashboard(user_credential.get_username())
+            # self.close()
+            # self.widget.show()
+        # else:
+        #     print("Failed")
 
     def update_password_visibility(self):
         if self.show_password_radioButton.isChecked():

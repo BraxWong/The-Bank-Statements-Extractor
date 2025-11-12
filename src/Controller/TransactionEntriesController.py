@@ -11,7 +11,7 @@ class TransactionEntriesController:
 
     def create_transaction_entries_table(self):
         self.cur.execute(
-            "CREATE TABLE if not exists TransactionEntries(username, amount, category, date, description, transaction_id)"
+            "CREATE TABLE if not exists TransactionEntries(username, amount, category, date, description)"
         )
     
     def get_transaction_entries_based_on_username(self, username):
@@ -23,17 +23,12 @@ class TransactionEntriesController:
             transactions.append(transaction[1], transaction[2], transaction[3], transaction[4])
         return transactions
         
-    def get_transaction_entry_based_on_transaction_id(self, transaction_id):
-        self.cur.execute('SELECT * FROM TransactionEntries WHERE transaction_id = ?', (transaction_id,))
-        info = self.cur.fetchone()
-        if not len(info): return None
-        return TransactionEntriesModel(info[1],info[2],info[3],info[4])
 
     def add_transaction_entry(self, username, amount, category, date, description, transaction_id):
         if self.get_transaction_entry_based_on_transaction_id(transaction_id) == None:
             return False
         self.cur.execute(
-            f'INSERT INTO TransactionEntries VALUES("{username}", "{amount}", "{category}", "{date}", "{description}", "{transaction_id}")'
+            f'INSERT INTO TransactionEntries VALUES("{username}", "{amount}", "{category}", "{date}", "{description}")'
         )
         self.con.commit()
 

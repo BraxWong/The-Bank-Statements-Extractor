@@ -1,9 +1,10 @@
 class TransactionEntriesModel:
-    def __init__(self, amount, category, date, description):
+    def __init__(self, amount, category, date, description, increment):
         self.amount = amount
         self.category = category
         self.date = date
         self.description = description
+        self.increment = increment
 
     def get_amount(self):
         return self.amount
@@ -17,6 +18,9 @@ class TransactionEntriesModel:
     def get_description(self):
         return self.description
 
+    def get_increment(self):
+        return self.increment
+
     def set_amount(amount):
         self.amount = amount
 
@@ -29,5 +33,8 @@ class TransactionEntriesModel:
     def set_description(description):
         self.description = description
 
+    def set_increment(increment):
+        self.increment = increment
+
     def to_string(self):
-        return f'Date: {self.date} | Description: {self.description} | Category: {self.category} | Amount: {self.amount}'
+        return f'Date: {self.date} | Description: {self.description} | Category: {self.category} | Amount: {self.amount} | Increment: {self.increment}'
