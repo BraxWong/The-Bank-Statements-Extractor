@@ -37,14 +37,13 @@ class Parser:
             return datetime_object
 
     def get_transaction_history(self, text):
-        transaction_history = []
         i = 0
         transaction_date = ''
         while i < len(text):
             date_info = self.parse_date(text[i])
             if date_info[0]:
-                transaction_date = date_info[1]
-                continue
+                transaction_date = str(self.date.year) + "-" + date_info[1]
+                print(transaction_date)
             #End of page footer, ignore the next 14 lines of text
             elif "The Hongkong and Shanghai Banking Corporation Limited" in text[i]:
                 i += 14
@@ -56,13 +55,16 @@ class Parser:
                 i += 8
             #End of all transaction history
             elif "Important Notice" in text[i]:
-                return transaction_history
-            else:
-                i = self.unpack_singular_transaction(transaction_date, text[i:i+4])
+                return
+            #Seeing transaction amount. Ignore this line
+            elif self.is_transaction_amount(text[i]):
+                i += 1
                 continue
-            print(text[i])
+            else:
+                print(f'About to unpack: {text[i]}')
+                i = self.unpack_singular_transaction(transaction_date, text[i:i+4], i)
+                continue
             i += 1
-        return transaction_history
 
     def parse_date(self, text):
         pattern = r'^(0?[1-9]|[12][0-9]|3[01])\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)$'
@@ -81,7 +83,7 @@ class Parser:
             month_name = match.group(2) 
             month_number = months[month_name] 
             
-            return [True,f"{day}-{month_number}"]
+            return [True,f"{month_number}-{day}"]
         else:
             return [False, None]
 
@@ -102,24 +104,28 @@ class Parser:
         line_skipped = 0
         for i in range(len(text)):
             if i == 0:
-                if "B/F BALANCE" not in text[i]:
-                    transaction_description = text[i]
-                    line_skipped += 1
+                # B/F BALANCE ... IRRELEVANT INFO
+                if "B/F BALANCE" in text[i]:
+                    return idx + 2
+                # CASH REBATE ... IRRELEVANT INFO
                 elif "CASH REBATE" in text[i]:
                     return idx + 4
                 else:
-                    return idx + 2
+                    transaction_description = text[i]
+                    line_skipped += 1
             elif i == 1:
                 line_skipped += 1
                 if not self.is_transaction_id(text[i]) and self.is_transaction_amount(text[i]):
                     transaction_amount = text[i]
+                    if not self.transaction_entries_controller.is_entry_in_db(self.username, transaction_amount, None, date, transaction_description):
+                        self.transaction_entries_controller.add_transaction_entry(self.username, transaction_amount, None, date, transaction_description)
                     return idx + line_skipped
             elif i == 2:
                 if self.is_transaction_amount(text[i]) and self.is_transaction_amount(text[i+1]):
-                    transaction_amount = text[i]
-                    line_skipped += 2
-                elif self.is_transaction_amount(text[i]) and not self.is_transaction_amount(text[i+1]):
-                    transaction = text[i]
                     line_skipped += 1
+                line_skipped += 1
+                transaction_amount = text[i]
+                if not self.transaction_entries_controller.is_entry_in_db(self.username, transaction_amount, None, date, transaction_description):
+                    self.transaction_entries_controller.add_transaction_entry(self.username, transaction_amount, None, date, transaction_description)
                 return idx + line_skipped
         return 0

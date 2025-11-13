@@ -1,5 +1,5 @@
 class TransactionEntriesModel:
-    def __init__(self, amount, category, date, description, increment):
+    def __init__(self, amount, category, date, description, increment = None):
         self.amount = amount
         self.category = category
         self.date = date

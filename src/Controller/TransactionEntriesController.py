@@ -20,13 +20,10 @@ class TransactionEntriesController:
         if not len(info): return None
         transactions = []
         for transaction in info:
-            transactions.append(transaction[1], transaction[2], transaction[3], transaction[4])
+            transactions.append(TransactionEntriesModel(transaction[1], transaction[2], transaction[3], transaction[4]))
         return transactions
         
-
-    def add_transaction_entry(self, username, amount, category, date, description, transaction_id):
-        if self.get_transaction_entry_based_on_transaction_id(transaction_id) == None:
-            return False
+    def add_transaction_entry(self, username, amount, category, date, description):
         self.cur.execute(
             f'INSERT INTO TransactionEntries VALUES("{username}", "{amount}", "{category}", "{date}", "{description}")'
         )
@@ -39,5 +36,13 @@ class TransactionEntriesController:
         info = self.cur.fetchall()
         transactions = []
         for transaction in info:
-            transactions.append(UserCredentialsModel(transaction[1], transaction[2], transaction[3], transaction[4]))
+            transactions.append(TransactionEntriesModel(transaction[1], transaction[2], transaction[3], transaction[4]))
         return transactions
+
+    def is_entry_in_db(self, username, amount, category, date, description):
+        self.cur.execute(
+            'SELECT * FROM TransactionEntries WHERE username = ? AND amount = ? AND category = ? AND date = ? AND description = ?', 
+            (username, amount, category, date, description)
+        )
+        info = self.cur.fetchone()
+        return info != None
