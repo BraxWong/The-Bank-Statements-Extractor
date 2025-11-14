@@ -2,6 +2,7 @@ import pymupdf
 from datetime import datetime
 import re
 from Controller.TransactionEntriesController import *
+import joblib
 
 class Parser:
 
@@ -22,7 +23,7 @@ class Parser:
             elif "Net Position" in text_lines[i]:
                 account_balance = text_lines[i+1] + " HKD"
             elif "HSBC One Account Transaction History" in text_lines[i]:
-                transaction_history = self.get_transaction_history(text_lines[i+7:])
+                self.get_transaction_history(text_lines[i+7:])
 
     def get_date(self, text):
         months = {
@@ -101,6 +102,7 @@ class Parser:
     def unpack_singular_transaction(self, date, text, idx):
         transaction_description = ''
         transaction_amount = ''
+        transaction_category = ''
         line_skipped = 0
         for i in range(len(text)):
             if i == 0:
@@ -118,7 +120,9 @@ class Parser:
                 if not self.is_transaction_id(text[i]) and self.is_transaction_amount(text[i]):
                     transaction_amount = text[i]
                     if not self.transaction_entries_controller.is_entry_in_db(self.username, transaction_amount, None, date, transaction_description):
-                        self.transaction_entries_controller.add_transaction_entry(self.username, transaction_amount, None, date, transaction_description)
+                        prediction_model = joblib.load('../src/PredictionModel/prediction_category_model.joblib')
+                        transaction_category = prediction_model.predict(text[i])
+                        self.transaction_entries_controller.add_transaction_entry(self.username, transaction_amount, transaction_category, date, transaction_description)
                     return idx + line_skipped
             elif i == 2:
                 if self.is_transaction_amount(text[i]) and self.is_transaction_amount(text[i+1]):
@@ -126,6 +130,7 @@ class Parser:
                 line_skipped += 1
                 transaction_amount = text[i]
                 if not self.transaction_entries_controller.is_entry_in_db(self.username, transaction_amount, None, date, transaction_description):
-                    self.transaction_entries_controller.add_transaction_entry(self.username, transaction_amount, None, date, transaction_description)
+                    transaction_category = prediction_model.predict(text[i])
+                    self.transaction_entries_controller.add_transaction_entry(self.username, transaction_amount, transaction_category, date, transaction_description)
                 return idx + line_skipped
         return 0
