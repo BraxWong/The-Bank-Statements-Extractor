@@ -121,7 +121,11 @@ class Parser:
                     transaction_amount = text[i]
                     if not self.transaction_entries_controller.is_entry_in_db(self.username, transaction_amount, None, date, transaction_description):
                         prediction_model = joblib.load('../src/PredictionModel/prediction_category_model.joblib')
-                        transaction_category = prediction_model.predict(text[i])
+                        try:
+                            transaction_category = prediction_model.predict(text[i])
+                        except Exception as e:
+                            print("Unable to predict the category... Default to MISC")
+                            transaction_category = "MISC"
                         self.transaction_entries_controller.add_transaction_entry(self.username, transaction_amount, transaction_category, date, transaction_description)
                     return idx + line_skipped
             elif i == 2:
@@ -130,7 +134,11 @@ class Parser:
                 line_skipped += 1
                 transaction_amount = text[i]
                 if not self.transaction_entries_controller.is_entry_in_db(self.username, transaction_amount, None, date, transaction_description):
-                    transaction_category = prediction_model.predict(text[i])
+                    try:
+                        transaction_category = prediction_model.predict(text[i])
+                    except Exception as e:
+                        print("Unable to predict the category... Default to MISC")
+                        transaction_category = "MISC"
                     self.transaction_entries_controller.add_transaction_entry(self.username, transaction_amount, transaction_category, date, transaction_description)
                 return idx + line_skipped
         return 0

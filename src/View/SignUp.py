@@ -140,6 +140,7 @@ class SignUp(QWidget):
         if error_message == None:
             self.user_credential_controller.add_user_credentials(self.email_input.text(), self.username_input.text(), self.password_input.text(), self.hint.text())
             dialog = CustomDialog("Success", "Your account has been created")
+            dialog.exec()
             transition_to_login_page(self)
         else:
             dialog = CustomDialog("Error", error_message)

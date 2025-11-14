@@ -4,6 +4,8 @@ from sklearn.pipeline import make_pipeline
 import pandas as pd
 import joblib
 
+
+#NOTICE: Feel free to modify the following to better suit your use cases
 data = {
     'description': [
         '7-ELEVEN',
@@ -31,7 +33,17 @@ data = {
         'Basketball',
         'Food Panda',
         'Uber Eats',
-        'Uber'
+        'Uber',
+        'Doctor',
+        'Movie',
+        'Cinema',
+        'Theatre',
+        'Netflix',
+        'HULU',
+        'Amazon Prime',
+        'HBO',
+        'Electricity Bill',
+        'Water Bill'
     ],
     'category': [
         'Food',
@@ -60,6 +72,16 @@ data = {
         'Food',
         'Food',
         'Transportation'
+        'Health',
+        'Entertainment',
+        'Entertainment',
+        'Entertainment',
+        'Entertainment',
+        'Entertainment',
+        'Entertainment',
+        'Entertainment',
+        'Utility',
+        'Utility'
     ]
 }
 df = pd.DataFrame(data)
