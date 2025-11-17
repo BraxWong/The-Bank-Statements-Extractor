@@ -122,7 +122,7 @@ class Parser:
                     if not self.transaction_entries_controller.is_entry_in_db(self.username, transaction_amount, None, date, transaction_description):
                         prediction_model = joblib.load('../src/PredictionModel/prediction_category_model.joblib')
                         try:
-                            transaction_category = prediction_model.predict(text[i])
+                            transaction_category = prediction_model.predict([text[i]])
                         except Exception as e:
                             print("Unable to predict the category... Default to MISC")
                             transaction_category = "MISC"

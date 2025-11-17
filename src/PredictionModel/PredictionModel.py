@@ -1,11 +1,11 @@
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import make_pipeline
 import pandas as pd
 import joblib
 
 
-#NOTICE: Feel free to modify the following to better suit your use cases
+# NOTICE: Feel free to modify the following to better suit your use cases
 data = {
     'description': [
         '7-ELEVEN',
@@ -43,7 +43,19 @@ data = {
         'Amazon Prime',
         'HBO',
         'Electricity Bill',
-        'Water Bill'
+        'Water Bill',
+        'Circle K',
+        'ParknShop',
+        'Market Place',
+        'Welcome',
+        'TREASURY-WATER',
+        'MIKI TRAVEL',
+        'H K ELECTRIC',
+        'PCCW',
+        'DELIVEROO',
+        'Audible'
+        'PAYME'
+        'THE H K JOCKEY CLUB'
     ],
     'category': [
         'Food',
@@ -71,7 +83,7 @@ data = {
         'Sports',
         'Food',
         'Food',
-        'Transportation'
+        'Transportation',
         'Health',
         'Entertainment',
         'Entertainment',
@@ -81,9 +93,22 @@ data = {
         'Entertainment',
         'Entertainment',
         'Utility',
-        'Utility'
+        'Utility',
+        'Food',
+        'Food',
+        'Food',
+        'Food',
+        'Utility',
+        'Entertainment'
+        'Utility',
+        'Utility',
+        'Food',
+        'Entertainment',
+        'MISC',
+        'Entertainment'
     ]
 }
+
 df = pd.DataFrame(data)
 
 model = make_pipeline(CountVectorizer(), MultinomialNB())
