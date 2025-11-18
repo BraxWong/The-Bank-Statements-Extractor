@@ -9,6 +9,7 @@ from CustomComponents.ClickableLabel import ClickableLabel
 from CustomComponents.CustomDialog import CustomDialog
 import Model.UserCredentialsModel
 from Controller.UserCredentialsController import *
+from Controller.UserSettingsController import *
 from Util.Util import *
 
 class SignUp(QWidget):
@@ -16,6 +17,7 @@ class SignUp(QWidget):
         super().__init__()
 
         self.user_credential_controller = UserCredentialsController()
+        self.user_settings_controller = UserSettingsController()
 
         self.setWindowTitle("Sign Up")
         self.setMinimumSize(QSize(300, 400))
@@ -139,12 +141,14 @@ class SignUp(QWidget):
         error_message = self.new_account_detail_validation()
         if error_message == None:
             self.user_credential_controller.add_user_credentials(self.email_input.text(), self.username_input.text(), self.password_input.text(), self.hint.text())
+            self.user_settings_controller.set_user_settings_based_on_username(self.username_input.text(), 0.0, 0.0, 0.0, 0.0, False, False)
             dialog = CustomDialog("Success", "Your account has been created")
             dialog.exec()
             transition_to_login_page(self)
         else:
             dialog = CustomDialog("Error", error_message)
             dialog.exec()
+            
     def new_account_detail_validation(self):
         error_message = 'Following errors have been found:\n'
         if not len(self.email_input.text()): 

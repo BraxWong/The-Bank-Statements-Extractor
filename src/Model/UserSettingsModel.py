@@ -8,7 +8,7 @@ class UserSettingsModel:
         self.monthly_income = monthly_income
         self.bank_account_balance = bank_account_balance
         self.notification_enabled = notification_enabled
-        self.backupEnabled = backupEnabled
+        self.backup_enabled = backup_enabled
 
     def set_username(self, username):
         self.username = username
@@ -57,3 +57,6 @@ class UserSettingsModel:
 
     def get_backup_enabled(self):
         return self.backup_enabled
+
+    def to_string(self):
+        return f'Username: {self.username} | Financial Goals: {self.financial_goals} | Monthly Spending Percentage: {str(int(self.monthly_spending_percentage) * 100) + '%'} | Monthly Saving Percentage: {str(int(self.monthly_saving_percentage) * 100) + '%'} | Monthly Income: {self.monthly_income} | Bank Account Balance: {self.bank_account_balance} | Notification Enabled: {self.notification_enabled} | Backup Enabled: {self.backup_enabled}'

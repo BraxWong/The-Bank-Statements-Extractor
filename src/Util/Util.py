@@ -1,5 +1,6 @@
 import platform
 import os
+import re
 
 def getOSDBPath():
     OS = platform.system()
@@ -33,6 +34,26 @@ def check_password_strength(password):
     if number_exists_in_password and letters_exists_in_password and upper_letters_exists_in_password and symbol_exists_in_password and len(password) >= 12:
         return True 
     return False
+
+def is_transaction_id(text):
+    pattern = r'^(HC\d{14})\s+(\d{2}[A-Z]{3})$'
+    matches = re.findall(pattern, text, re.MULTILINE)
+
+    return len(matches) == 2
+
+def is_transaction_amount(text):
+    pattern = r'(\d{1,3}(?:,\d{3})*\.\d{2})'
+    matches = re.findall(pattern, text)
+    return len(matches) == 1
+
+def convert_currency_string_to_float(text):
+    pattern = r'(\d{1,3}(?:,\d{3})*\.\d{2})'
+    match = re.match(pattern, text)
+    if match:
+        currency_string = match.group(1).replace(',', '')
+        return float(currency_string)
+    else:
+        return None
 
 new_widget_reference = None
 def transition_to_login_page(widget):

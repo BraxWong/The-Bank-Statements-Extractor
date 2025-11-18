@@ -1,7 +1,8 @@
 import pymupdf
 from datetime import datetime
-import re
 from Controller.TransactionEntriesController import *
+from Controller.UserSettingsController import *
+from Util.Util import *
 import joblib
 
 class Parser:
@@ -10,6 +11,7 @@ class Parser:
         self.file_location = file_location
         self.username = username
         self.transaction_entries_controller = TransactionEntriesController()
+        self.user_settings_controller = UserSettingsController()
         self.date = ''
 
     def parse(self):
@@ -21,7 +23,8 @@ class Parser:
             if "Page 1" in text_lines[i]:
                 self.date = self.get_date(text_lines[i+1])
             elif "Net Position" in text_lines[i]:
-                account_balance = text_lines[i+1] + " HKD"
+                account_balance = convert_currency_string_to_float(text_lines[i+1])
+                self.user_settings_controller.update_bank_account_balance_based_on_username(self.username, account_balance)
             elif "HSBC One Account Transaction History" in text_lines[i]:
                 self.get_transaction_history(text_lines[i+7:])
 
@@ -58,7 +61,7 @@ class Parser:
             elif "Important Notice" in text[i]:
                 return
             #Seeing transaction amount. Ignore this line
-            elif self.is_transaction_amount(text[i]):
+            elif is_transaction_amount(text[i]):
                 i += 1
                 continue
             else:
@@ -88,17 +91,6 @@ class Parser:
         else:
             return [False, None]
 
-    def is_transaction_id(self, text):
-        pattern = r'^(HC\d{14})\s+(\d{2}[A-Z]{3})$'
-        matches = re.findall(pattern, text, re.MULTILINE)
-
-        return len(matches) == 2
-
-    def is_transaction_amount(self, text):
-        pattern = r'(\d{1,3}(?:,\d{3})*\.\d{2})'
-        matches = re.findall(pattern, text)
-        return len(matches) == 1
-
     def unpack_singular_transaction(self, date, text, idx):
         transaction_description = ''
         transaction_amount = ''
@@ -117,9 +109,10 @@ class Parser:
                     line_skipped += 1
             elif i == 1:
                 line_skipped += 1
-                if not self.is_transaction_id(text[i]) and self.is_transaction_amount(text[i]):
+                if not is_transaction_id(text[i]) and is_transaction_amount(text[i]):
                     transaction_amount = text[i]
                     if not self.transaction_entries_controller.is_entry_in_db(self.username, transaction_amount, None, date, transaction_description):
+                        #TODO: The prediction model works horribly. Needs fixing
                         prediction_model = joblib.load('../src/PredictionModel/prediction_category_model.joblib')
                         try:
                             transaction_category = prediction_model.predict([text[i]])
@@ -129,7 +122,7 @@ class Parser:
                         self.transaction_entries_controller.add_transaction_entry(self.username, transaction_amount, transaction_category, date, transaction_description)
                     return idx + line_skipped
             elif i == 2:
-                if self.is_transaction_amount(text[i]) and self.is_transaction_amount(text[i+1]):
+                if is_transaction_amount(text[i]) and is_transaction_amount(text[i+1]):
                     line_skipped += 1
                 line_skipped += 1
                 transaction_amount = text[i]

@@ -2,6 +2,7 @@ import sqlite3
 from Model.UserSettingsModel import *
 from Model.FinancialGoalModel import *
 from Controller.FinancialGoalsController import *
+import Util.Util as util
 
 class UserSettingsController:
 
@@ -35,11 +36,8 @@ class UserSettingsController:
         if info is None:
             return None
         user_id = info[0]
-        cursor.execute('SELECT goal, achieved FROM FinancialGoals WHERE user_settings_id = ?', (user_id,))
-        goals = cursor.fetchall()
-        if goals is None:
-            return None
-        return UserSettingsModel(info[1], goals, info[2], info[3], info[4], info[5], info[6], info[7])
+        financial_goals = self.financial_goals_controller.get_financial_goals(user_id)
+        return UserSettingsModel(info[1], financial_goals, info[2], info[3], info[4], info[5], info[6], info[7])
 
     def add_financial_goal(self, username, goal, achieved = False):
         self.cur.execute('SELECT * FROM UserSettings WHERE username = ?', (username,))
@@ -51,13 +49,21 @@ class UserSettingsController:
 
     def set_user_settings_based_on_username(self, username, monthly_spending_percentage, monthly_saving_percentage, monthly_income, bank_account_balance, notification_enabled, backup_enabled):
         self.cur.execute(
-            f'INSERT INTO FinancialGoals VALUES("{username}", "{monthly_spending_percentage}", "{monthly_saving_percentage}", "{monthly_income}", "{bank_account_balance}", "{notification_enabled}", "{backup_enabled}")'
+            '''
+            INSERT INTO UserSettings (username, monthly_spending_percentage, monthly_saving_percentage, monthly_income, bank_account_balance, notification_enabled, backup_enabled)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (username, monthly_spending_percentage, monthly_saving_percentage, monthly_income, bank_account_balance, notification_enabled, backup_enabled)
         )
         self.con.commit()
 
     def update_user_settings_based_on_username(self, username, monthly_spending_percentage, monthly_saving_percentage, monthly_income, bank_account_balance, notification_enabled, backup_enabled):
         self.cur.execute(
-            f'UPDATE FinancialGoals SET monthly_spending_percentage = ? AND monthly_saving_percentage = ? AND monthly_income = ? AND bank_account_balance = ? AND notification_enabled = ? 
-            AND backup_enabled = ? WHERE username = ?', (monthly_spending_percentage, monthly_saving_percentage, monthly_income, bank_account_balance, notification_enabled, backup_enabled, username)
+            f'UPDATE UserSettings SET monthly_spending_percentage = ? AND monthly_saving_percentage = ? AND monthly_income = ? AND bank_account_balance = ? AND notification_enabled = ? AND backup_enabled = ? WHERE username = ?', (monthly_spending_percentage, monthly_saving_percentage, monthly_income, bank_account_balance, notification_enabled, backup_enabled, username)
+        )
+        self.con.commit()
+
+    def update_bank_account_balance_based_on_username(self, username, bank_account_balance):
+        self.cur.execute(
+            f'UPDATE UserSettings SET bank_account_balance = ? WHERE username = ?', (bank_account_balance, username)
         )
         self.con.commit()

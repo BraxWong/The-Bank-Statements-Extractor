@@ -5,6 +5,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QColor, QFont
+from Controller.UserSettingsController import *
 from Controller.TransactionEntriesController import *
 from Util.Parser import *
 from CustomComponents.CustomDialog import *
@@ -15,6 +16,7 @@ class Dashboard(QWidget):
 
         self.setWindowTitle("Dashboard")
         self.username = username
+        self.user_settings_controller = UserSettingsController()
         self.transaction_entries_controller = TransactionEntriesController()
         transactions = self.transaction_entries_controller.get_transaction_entries_based_on_username(self.username)
         while transactions is None:
