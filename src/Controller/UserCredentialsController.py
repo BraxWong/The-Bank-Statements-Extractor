@@ -37,7 +37,7 @@ class UserCredentialsController:
 
     def remove_credentials_based_on_username(self, username):
         self.cur.execute(
-            f'DELETE * FROM UserCredentials WHERE username = "{username}"'
+            f'DELETE FROM UserCredentials WHERE username = "{username}"'
         )
         self.con.commit()
 

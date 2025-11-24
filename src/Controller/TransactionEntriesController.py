@@ -23,13 +23,22 @@ class TransactionEntriesController:
             transactions.append(TransactionEntriesModel(transaction[1], transaction[2], transaction[3], transaction[4]))
         return transactions
         
+    def get_transaction_entries_based_on_username_and_month(self, username, month):
+        self.cur.execute('SELECT * FROM TransactionEntries WHERE username = ? AND strftime("%m", date) = ?', (username, month))
+        info = self.cur.fetchall()
+        if not len(info): return None
+        transactions = []
+        for transaction in info:
+            transactions.append(TransactionEntriesModel(transaction[1], transaction[2], transaction[3], transaction[4]))
+        return transactions
+
     def add_transaction_entry(self, username, amount, category, date, description):
         self.cur.execute(
             f'INSERT INTO TransactionEntries VALUES("{username}", "{amount}", "{category}", "{date}", "{description}")'
         )
         self.con.commit()
 
-    def get_all_credentials(self):
+    def get_all_entries(self):
         self.cur.execute(
             f'SELECT * FROM TransactionEntries'
         )
@@ -46,3 +55,7 @@ class TransactionEntriesController:
         )
         info = self.cur.fetchone()
         return info != None
+
+    def delete_all_transaction_entries_based_on_username(self, username):
+        self.cur.execute('DELETE FROM TransactionEntries WHERE username = ?', (username,))
+        self.con.commit()

@@ -115,7 +115,7 @@ class Parser:
                         #TODO: The prediction model works horribly. Needs fixing
                         prediction_model = joblib.load('../src/PredictionModel/prediction_category_model.joblib')
                         try:
-                            transaction_category = prediction_model.predict([text[i]])
+                            transaction_category = prediction_model.predict([text[i]])[0]
                         except Exception as e:
                             print("Unable to predict the category... Default to MISC")
                             transaction_category = "MISC"
