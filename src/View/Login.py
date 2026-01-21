@@ -15,6 +15,7 @@ class Login(QWidget):
     def __init__(self):
         super().__init__()
 
+
         self.user_credential_controller = UserCredentialsController()
         self.setWindowTitle("Login")
         self.setMinimumSize(QSize(300, 500))

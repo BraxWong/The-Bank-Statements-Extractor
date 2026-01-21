@@ -8,6 +8,7 @@ from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QColor, QFont
 from Controller.UserSettingsController import *
 from Controller.TransactionEntriesController import *
+from View.FinancialGoals import *
 from Util.Parser import *
 from CustomComponents.CustomDialog import *
 from CustomComponents.Card import *
@@ -22,6 +23,8 @@ class Dashboard(QWidget):
         self.user_settings_controller = UserSettingsController()
         self.transaction_entries_controller = TransactionEntriesController()
         transactions = self.transaction_entries_controller.get_transaction_entries_based_on_username(self.username)
+        # self.burger_menu = QPushButton("")
+        # self.burger_menu.setIcon()
         while transactions is None:
             dialog = CustomDialog('Missing Data', 'I noticed that you have not enter any data into system. Please select a bank statement to continue.')
             dialog.exec()
@@ -94,6 +97,24 @@ class Dashboard(QWidget):
         financial_goals_display.setFixedSize(QSize(600, 600))
         financial_goals_layout = QFormLayout()
 
+        add_financial_goals_button = QPushButton("Add Financial Goals")
+        add_financial_goals_button.clicked.connect(self.transition_to_financial_goals_page)
+        add_financial_goals_button.setStyleSheet("""
+             QPushButton {
+                border: none;
+                border-radius: 5px;
+                padding: 10px;
+                font-size: 16px;
+                font-weight: bold;
+                min-width: 100px;
+                max-width: 200px;
+            }
+            
+            QPushButton:hover {
+                border: 2px solid #ffffff
+            }
+        """)
+
         financial_goals_title_label = QLabel("Financial Goals")
         financial_goals_title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         financial_goals_title_label.setStyleSheet("border: none;")
@@ -101,6 +122,7 @@ class Dashboard(QWidget):
         font.setBold(True)
         financial_goals_title_label.setFont(font)
 
+        financial_goals_layout.addRow(add_financial_goals_button)
         financial_goals_layout.addRow(financial_goals_title_label)
 
         financial_goals_display.setLayout(financial_goals_layout)
@@ -143,3 +165,8 @@ class Dashboard(QWidget):
         grid_layout.addWidget(monthly_spending, 1, 1)
 
         self.setLayout(grid_layout)
+
+    def transition_to_financial_goals_page(self):
+        self.widget = FinancialGoals()
+        self.close()
+        self.widget.show()
